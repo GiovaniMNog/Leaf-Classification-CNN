@@ -11,6 +11,7 @@ This project aims to classify images of leaves into different species using a Co
 ```
 Leaf-Classification-CNN/
 ├── data/
+├   ├── Folio/
 │   ├── train/
 │   ├── test/
 │   └── val/
@@ -27,19 +28,16 @@ Leaf-Classification-CNN/
 
 ## Datasets
 
-The dataset used for this project contains images of leaves from various plant species. Each image is labeled with the corresponding species. The dataset is divided into training, validation, and test sets. You can download the dataset from [Kaggle](https://www.kaggle.com) or any other relevant source.
+The  Folio dataset used for this project contains images of leaves from various plant species. Each image is labeled with the corresponding species. The dataset is divided into training, validation, and test sets. You can download the dataset from [Kaggle](https://www.kaggle.com) or any other relevant source.
 
 ## Requirements
 
 The project requires the following libraries and frameworks:
 
-- TensorFlow
-- Keras
-- PyTorch (optional)
+- PyTorch 
 - NumPy
 - pandas
 - Matplotlib
-- scikit-learn
 
 You can install the required packages using the following command:
 
