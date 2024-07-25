@@ -57,11 +57,12 @@ The preprocessing script is located in `src/data_preprocessing.py`.
 
 ## Model Architecture
 
-The CNN model architecture includes:
+The CNN model architecture, wich is based on the resnet-50 archtecture, includes:
 
 - Convolutional layers for feature extraction
 - Pooling layers for down-sampling
 - Fully connected layers for classification
+- BatchNormalization for stability
 - Dropout layers for regularization
 
 The model is defined in `src/model.py`.
