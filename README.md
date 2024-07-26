@@ -38,6 +38,8 @@ The project requires the following libraries and frameworks:
 - NumPy
 - pandas
 - Matplotlib
+- scikit-learn
+- seaborn
 
 You can install the required packages using the following command:
 
