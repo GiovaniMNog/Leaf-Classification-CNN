@@ -1,2 +1,4 @@
 *ignore the dataset files in the data folder*
 /data/
+/src/__pycache__/
+src/resnet50_with_dropout(30ep).pth

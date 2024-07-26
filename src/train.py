@@ -3,16 +3,23 @@ import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
+import os
+import matplotlib.pyplot as plt
 
-# Importe a função para criar o modelo modificado
-from model import create_resnet50_with_dropout
+# Import the function to create the modified model
+from model import ResNet50WithDropout
 
 # Parameters
+save_dir = 'src'
 data_dir = 'data'
 batch_size = 32
 learning_rate = 0.001
-num_epochs = 10
+num_epochs = 30
 dropout_rate = 0.5
+
+# Create directory to save models if it doesn't exist
+if not os.path.exists(save_dir):
+    os.makedirs(save_dir)
 
 # Transformations for data augmentation and normalization
 train_transforms = transforms.Compose([
@@ -24,26 +31,28 @@ train_transforms = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
-# Load the data 
+# Load the data
 train_dataset = datasets.ImageFolder(root=f'{data_dir}/train', transform=train_transforms)
 
 # DataLoader
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
 # Create the model
-model = create_resnet50_with_dropout(dropout_rate)
-model = model.to('cuda' if torch.cuda.is_available() else 'cpu')
+model = ResNet50WithDropout(dropout_rate)
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+model = model.to(device)
+print(device)
 
-# Configurate loss and optimizer
+# Configure loss and optimizer
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
-# train function
-def train(model, train_loader, criterion, optimizer, epoch):
+# Training function
+def train(model, train_loader, criterion, optimizer, epoch, train_losses):
     model.train()
     running_loss = 0.0
     for inputs, labels in train_loader:
-        inputs, labels = inputs.to('cuda'), labels.to('cuda')
+        inputs, labels = inputs.to(device), labels.to(device)
         
         optimizer.zero_grad()
         outputs = model(inputs)
@@ -54,10 +63,32 @@ def train(model, train_loader, criterion, optimizer, epoch):
         running_loss += loss.item() * inputs.size(0)
     
     epoch_loss = running_loss / len(train_loader.dataset)
+    train_losses.append(epoch_loss)
     print(f'Epoch {epoch}, Training Loss: {epoch_loss:.4f}')
 
-# Model training
-for epoch in range(num_epochs):
-    train(model, train_loader, criterion, optimizer, epoch)
+# List to store training losses
+train_losses = []
 
-print("Training concluded!")
+# Train the model
+for epoch in range(num_epochs):
+    train(model, train_loader, criterion, optimizer, epoch, train_losses)
+
+# Save the model and parameters after training
+model_path = os.path.join(save_dir, 'resnet50_with_dropout(30ep).pth')
+torch.save({
+    'epoch': num_epochs,
+    'model_state_dict': model.state_dict(),
+    'optimizer_state_dict': optimizer.state_dict(),
+    'loss': criterion,
+    'dropout_rate': dropout_rate,
+}, model_path)
+
+print(f"Training completed! Model saved to {model_path}")
+
+# Plot the training loss
+plt.plot(range(1, num_epochs + 1), train_losses, label='Training Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.title('Training Loss Over Epochs')
+plt.legend()
+plt.show()
